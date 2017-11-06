@@ -33,6 +33,7 @@ func New(path string, f func(http.ResponseWriter, *http.Request), t *testing.T) 
 	r := &T{}
 	r.path = path
 	r.manualReq = false
+	r.method = "GET"
 	r.done = false
 	r.params = &url.Values{}
 	r.f = f
@@ -140,7 +141,7 @@ func (t *T) ResponseRecorder() *httptest.ResponseRecorder {
 
 func (t *T) checkDone() {
 	if !t.done {
-		t.t.Error("the request have not been done, cannot get the recoder")
+		t.t.Errorf("Request of [%s] to [%s] have not been done, cannot get the recoder", t.method, t.path)
 	}
 }
 
@@ -148,7 +149,7 @@ func (t *T) checkDone() {
 func (t *T) CheckCode(code int) *T {
 	t.checkDone()
 	if t.rr.Code != code {
-		t.t.Errorf("want response code, want [%d], but got [%d]", code, t.rr.Code)
+		t.t.Errorf("Request of [%s] to [%s] test error, want response code [%d], but got [%d]", t.method, t.path, code, t.rr.Code)
 	}
 	return t
 }
@@ -159,7 +160,7 @@ func (t *T) CheckHeader(name, want string) *T {
 	actual := t.rr.Header().Get(name)
 
 	if actual != want {
-		t.t.Errorf("want header [%s] to equal: [%s], but got: [%s]", name, want, actual)
+		t.t.Errorf("Request of [%s] to [%s] test error, want header [%s] to equal: [%s], but got: [%s]", t.method, t.path, name, want, actual)
 	}
 	return t
 }
@@ -167,9 +168,11 @@ func (t *T) CheckHeader(name, want string) *T {
 //BodyContains checks whether the body contains a certain string.
 func (t *T) BodyContains(want string) *T {
 	t.checkDone()
-
+	if t.rr == nil || t.rr.Body == nil {
+		return t
+	}
 	if !strings.Contains(string(t.rr.Body.Bytes()), want) {
-		t.t.Errorf("want content contains [%s], but got none", want)
+		t.t.Errorf("Request of [%s] to [%s] test error, want content contains [%s], but got none", t.method, t.path, want)
 	}
 	return t
 }
