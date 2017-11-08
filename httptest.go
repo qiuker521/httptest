@@ -133,8 +133,8 @@ func (t *T) AddParams(k, v string) *T {
 	return t
 }
 
-//ResponseRecorder returns the origin *httptest.ResponseRecorder
-func (t *T) ResponseRecorder() *httptest.ResponseRecorder {
+//GetResponseRecorder returns the origin *httptest.ResponseRecorder
+func (t *T) GetResponseRecorder() *httptest.ResponseRecorder {
 	t.checkDone()
 	return t.rr
 }
@@ -165,22 +165,29 @@ func (t *T) CheckHeader(name, want string) *T {
 	return t
 }
 
-//BodyContains checks whether the body contains a certain string.
-func (t *T) BodyContains(want string) *T {
+//CheckBodyContains checks whether the body contains a certain string.
+func (t *T) CheckBodyContains(want string) *T {
 	t.checkDone()
 	if t.rr == nil || t.rr.Body == nil {
 		return t
 	}
-	if !strings.Contains(string(t.rr.Body.Bytes()), want) {
+	if !strings.Contains(t.rr.Body.String(), want) {
 		t.t.Errorf("Request of [%s] to [%s] test error, want content contains [%s], but got none", t.method, t.path, want)
 	}
 	return t
 }
 
-//Body returns the pure string(response body).
-func (t *T) Body() string {
+//GetBody returns the pure response body.
+func (t *T) GetBody() string {
 	t.checkDone()
-	return string(t.rr.Body.Bytes())
+	return t.rr.Body.String()
+}
+
+//GetCookies returns the cookies that the test handler returns.
+func (t *T) GetCookies() []*http.Cookie {
+	t.checkDone()
+	resp := http.Response{Header: t.ResponseRecorder().Header()}
+	return resp.Cookies()
 }
 
 //Do just make a request.

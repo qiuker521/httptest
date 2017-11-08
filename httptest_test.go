@@ -71,7 +71,7 @@ func TestResponseRecorder(t *testing.T) {
 	if rr.Code != http.StatusOK {
 		t.Errorf("error while get response code: want [%d], got [%d]", http.StatusOK, rr.Code)
 	}
-	if !strings.Contains(string(rr.Body.Bytes()), "nam22") {
+	if !strings.Contains(rr.Body.String()), "nam22") {
 		t.Errorf("error while get body, want [%s], got none", "nam22")
 	}
 	rr = New("/dump", headerHandler, t).
@@ -94,7 +94,7 @@ func TestResponseRecorder(t *testing.T) {
 	if rr.Code != http.StatusOK {
 		t.Errorf("error while get response code: want [%d], got [%d]", http.StatusOK, rr.Code)
 	}
-	if !strings.Contains(string(rr.Body.Bytes()), "nam22") {
+	if !strings.Contains(rr.Body.String()), "nam22") {
 		t.Errorf("error while get body, want [%s], got none", "nam22")
 	}
 	rr = New("/dump", headerHandler, t).
