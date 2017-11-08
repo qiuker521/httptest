@@ -42,10 +42,13 @@ New("/ok", badHandler, t).Do().CheckCode(http.StatusOK)
 New("/", badHandler, t).Post().AddParams("name", "value1").AddParams("nam22", "value3").Do()
 
 //Add cookie to request, and test if the response body contains a certain string:
-New("/", cookieHandler, t).Get().AddCookies(cookie).Do().BodyContains("testcookievalue")
+New("/", cookieHandler, t).Get().AddCookies(cookie).Do().CheckBodyContains("testcookievalue")
 
 //Just get the *http.ResponseRecorder, do every thing your self.
-rr = New("/dump", headerHandler, t).Post().AddParams("name", "value1").Do().ResponseRecorder()
+rr = New("/dump", headerHandler, t).Post().AddParams("name", "value1").Do().GetResponseRecorder()
+
+//Get the cookie, for further testing
+cookie = New("/dump", headerHandler, t).Post().AddParams("name", "value1").Do().GetCookie()
 
 //We forget to add parameter to request
 New("/ok", badHandler, t).AddParams("a", "aa").AddParams("b", "bb").Do().CheckCode(http.StatusOK)

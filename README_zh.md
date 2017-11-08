@@ -27,10 +27,13 @@ New("/ok", badHandler, t).Do().CheckCode(http.StatusOK)
 New("/", badHandler, t).Post().AddParams("name", "value1").AddParams("nam22", "value3").Do()
 
 //带着cookie测试，并且判断结果是否包含字符串。
-New("/", cookieHandler, t).Get().AddCookies(cookie).Do().BodyContains("testcookievalue")
+New("/", cookieHandler, t).Get().AddCookies(cookie).Do().CheckBodyContains("testcookievalue")
 
 //获取 *http.ResponseRecorder, 然后自己测试
-rr = New("/dump", headerHandler, t).Post().AddParams("name", "value1").Do().ResponseRecorder()
+rr = New("/dump", headerHandler, t).Post().AddParams("name", "value1").Do().GetResponseRecorder()
+
+//获取 cookie, 以供后续测试
+rr = New("/dump", headerHandler, t).Post().AddParams("name", "value1").Do().GetCookie()
 
 //给请求加参数，不写默认是GET请求
 New("/ok", badHandler, t).AddParams("a", "aa").AddParams("b", "bb").Do().CheckCode(http.StatusOK)
