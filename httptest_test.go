@@ -56,8 +56,8 @@ func TestBodyContains(t *testing.T) {
 		AddParams("nam22", "value3").
 		Do().
 		CheckCode(http.StatusOK).
-		BodyContains("nam22").
-		BodyContains("value3")
+		CheckBodyContains("nam22").
+		CheckBodyContains("value3")
 }
 
 func TestResponseRecorder(t *testing.T) {
@@ -67,11 +67,11 @@ func TestResponseRecorder(t *testing.T) {
 		AddParams("name", "value1").
 		AddParams("nam22", "value3").
 		Do().
-		ResponseRecorder()
+		GetResponseRecorder()
 	if rr.Code != http.StatusOK {
 		t.Errorf("error while get response code: want [%d], got [%d]", http.StatusOK, rr.Code)
 	}
-	if !strings.Contains(rr.Body.String()), "nam22") {
+	if !strings.Contains(rr.Body.String(), "nam22") {
 		t.Errorf("error while get body, want [%s], got none", "nam22")
 	}
 	rr = New("/dump", headerHandler, t).
@@ -79,7 +79,7 @@ func TestResponseRecorder(t *testing.T) {
 		AddParams("name", "value1").
 		AddParams("nam22", "value3").
 		Do().
-		ResponseRecorder()
+		GetResponseRecorder()
 
 	if rr.Header().Get("nam22") != "value3" {
 		t.Errorf("want header [%s] to equal: [%s], but got: [%s]", "nam22", "value3", rr.Header().Get("nam22"))
@@ -90,11 +90,11 @@ func TestResponseRecorder(t *testing.T) {
 		AddParams("name", "value1").
 		AddParams("nam22", "value3").
 		Do().
-		ResponseRecorder()
+		GetResponseRecorder()
 	if rr.Code != http.StatusOK {
 		t.Errorf("error while get response code: want [%d], got [%d]", http.StatusOK, rr.Code)
 	}
-	if !strings.Contains(rr.Body.String()), "nam22") {
+	if !strings.Contains(rr.Body.String(), "nam22") {
 		t.Errorf("error while get body, want [%s], got none", "nam22")
 	}
 	rr = New("/dump", headerHandler, t).
@@ -102,7 +102,7 @@ func TestResponseRecorder(t *testing.T) {
 		AddParams("name", "value1").
 		AddParams("nam22", "value3").
 		Do().
-		ResponseRecorder()
+		GetResponseRecorder()
 
 	if rr.Header().Get("nam22") != "value3" {
 		t.Errorf("want header [%s] to equal: [%s], but got: [%s]", "nam22", "value3", rr.Header().Get("nam22"))
@@ -120,11 +120,11 @@ func TestCookie(t *testing.T) {
 		Get().
 		AddCookies(cookie).
 		Do().
-		BodyContains("testcookievalue")
+		CheckBodyContains("testcookievalue")
 
 	New("/", cookieHandler, t).
 		Post().
 		AddCookies(cookie).
 		Do().
-		BodyContains("testcookievalue")
+		CheckBodyContains("testcookievalue")
 }

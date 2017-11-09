@@ -186,7 +186,7 @@ func (t *T) GetBody() string {
 //GetCookies returns the cookies that the test handler returns.
 func (t *T) GetCookies() []*http.Cookie {
 	t.checkDone()
-	resp := http.Response{Header: t.ResponseRecorder().Header()}
+	resp := http.Response{Header: t.GetResponseRecorder().Header()}
 	return resp.Cookies()
 }
 
